@@ -18,7 +18,7 @@ import {
 
 import { useState, useRef } from 'react';
 import clsx from 'clsx';
-import { useOutsideClickClose } from 'src/ui/select/hooks/useOutsideClickClose';
+import { useClose } from './hooks/useClose';
 
 import styles from './ArticleParamsForm.module.scss';
 
@@ -31,14 +31,14 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 	articleState,
 	setArticleState,
 }) => {
-	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 	const [formState, setFormState] = useState<ArticleStateType>(articleState);
-	const rootRef = useRef<HTMLDivElement>(null);
+	const menuRef = useRef<HTMLDivElement>(null);
 
-	useOutsideClickClose({
-		isOpen,
-		rootRef,
-		onChange: setIsOpen,
+	useClose({
+		isOpen: isMenuOpen,
+		rootRef: menuRef,
+		onClose: () => setIsMenuOpen(false),
 	});
 
 	const handleInputChange = (
@@ -62,10 +62,15 @@ export const ArticleParamsForm: React.FC<ArticleParamsFormProps> = ({
 	};
 
 	return (
-		<div ref={rootRef}>
-			<ArrowButton isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
+		<div ref={menuRef}>
+			<ArrowButton
+				isOpen={isMenuOpen}
+				onClick={() => setIsMenuOpen(!isMenuOpen)}
+			/>
 			<aside
-				className={clsx(styles.container, { [styles.container_open]: isOpen })}>
+				className={clsx(styles.container, {
+					[styles.container_open]: isMenuOpen,
+				})}>
 				<form
 					className={styles.form}
 					onSubmit={handleSubmitForm}
